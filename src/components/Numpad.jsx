@@ -10,9 +10,9 @@ function Numpad({setSelectedNumber}){
 
     return(
         <div className="flex justify-center mt-4">
-            <div className="grid gap-1 grid-row-1 grid-cols-6 ">
+            <div className="grid gap-1 grid-row-1 grid-cols-9 ">
 
-                {Array.from({length: 6}).map((__, index) => {
+                {Array.from({length: 9}).map((__, index) => {
                     return(
                     <div 
                     key={index}

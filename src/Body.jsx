@@ -8,13 +8,13 @@ import { useState } from "react"
 
 function Body(){
 
-    const [selectedNumer, setSelectedNumber] = useState(null)
+    const [selectedNumber, setSelectedNumber] = useState(null)
 
 
     return(
         <div className="min-h-screen flex flex-col items-center gap-8 mt-8">
             <Header/>
-            <GameBoard selectedNumer={selectedNumer}/>
+            <GameBoard selectedNumber={selectedNumber}/>
             <Numpad setSelectedNumber={setSelectedNumber}/>
         </div>
     )
