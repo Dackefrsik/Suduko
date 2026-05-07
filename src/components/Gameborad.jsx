@@ -4,8 +4,6 @@ import "../../style/style.css"
 function GameBoard({selectedNumber}){
 
     const [board, setBoard] = useState(Array.from({length: 9}, () => Array(9).fill(null)))
-    const [activeNumber, setActiveNumber] = useState({})
-    const [isSelectd, setSelected] = useState(false)
     
     function handleClick(col, row){
         setBoard(prev => {
@@ -27,6 +25,7 @@ function GameBoard({selectedNumber}){
             }
         }
 
+        //Check box 
         const startRow = Math.floor(row / 3) * 3
         const startCol = Math.floor(col / 3) * 3
 
@@ -40,6 +39,7 @@ function GameBoard({selectedNumber}){
         }
     }
 
+    //Return true if conflict in row
     function haveRowConflict(row, col) {
         const value = board[row][col]
 
@@ -54,6 +54,7 @@ function GameBoard({selectedNumber}){
         return false
     }
 
+    //Return true if conflict in col
     function haveColConflict(row, col){
         const value = board[row][col]
 
@@ -68,6 +69,7 @@ function GameBoard({selectedNumber}){
         return false
     }
 
+    //Return true if conflict in box
     function haveBoxConflict(row, col){
         const value = board[row][col]
 
