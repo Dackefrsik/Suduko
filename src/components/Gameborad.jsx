@@ -1,26 +1,53 @@
-import {useState } from "react"
+import {useEffect, useState } from "react"
 import "../../style/style.css"
 
 function GameBoard({selectedNumber}){
 
     const [board, setBoard] = useState(Array.from({length: 9}, () => Array(9).fill(null)))
-    
-    function handleClick(col, row){
+
+    useEffect(() => {
+
+        let next = board.map(r => [...r]) 
+        const amountOfSetNumber = Math.floor(Math.random() * 10)
+        console.log("Numbers " + amountOfSetNumber)
+        
+        for(let i = 0; i < amountOfSetNumber; i ++){
+
+            let randomNumber;
+            let row;
+            let col;
+
+            do{
+                randomNumber = Math.floor(Math.random() * 9) + 1
+                row = Math.floor(Math.random() * 9) 
+                col = Math.floor(Math.random() * 9) 
+            }
+            while(hasConflict(next ,row, col, randomNumber))
+
+            next[row][col] = randomNumber
+
+            
+        }
+        setBoard(next)
+    }, [])
+
+    //Handles clicks on gameboard
+    function handleClick(col, row, number){
         setBoard(prev => {
             const next = prev.map(r => [...r])
-            next[row][col] = selectedNumber
+            next[row][col] = number
             return next})
 
         //Check row
         for(let c = 0; c < 9; c++){
-            if(board[row][c] === selectedNumber){
+            if(board[row][c] === number){
                 console.log("Exists in row")
             }
         }
 
         //Check col
         for(let c = 0; c < 9; c++){
-            if(board[c][col] === selectedNumber){
+            if(board[c][col] === number){
                 console.log("Exists in col")
             }
         }
@@ -31,22 +58,19 @@ function GameBoard({selectedNumber}){
 
         for(let r = startRow; r < startRow + 3; r++){
             for(let c = startCol; c < startCol + 3; c++){
-                if(board[r][c] === selectedNumber){
+                if(board[r][c] === number){
                     console.log("Exists in box")
-
                 }
             }
         }
     }
 
     //Return true if conflict in row
-    function haveRowConflict(row, col) {
-        const value = board[row][col]
-
+    function haveRowConflict(currentBoard, row, col, value) {
         if(value == null) return false
 
         for(let c = 0; c < 9; c++){
-            if(c !== col && board[row][c] === value){
+            if(c !== col && currentBoard[row][c] === value){
                 return true
             }
         }
@@ -55,13 +79,11 @@ function GameBoard({selectedNumber}){
     }
 
     //Return true if conflict in col
-    function haveColConflict(row, col){
-        const value = board[row][col]
-
+    function haveColConflict(currentBoard, row, col, value){
         if(value == null) return false
 
         for(let r = 0; r < 9; r++){
-            if(r !== row && board[r][col] === value){
+            if(r !== row && currentBoard[r][col] === value){
                 return true
             }
         }
@@ -70,9 +92,7 @@ function GameBoard({selectedNumber}){
     }
 
     //Return true if conflict in box
-    function haveBoxConflict(row, col){
-        const value = board[row][col]
-
+    function haveBoxConflict(currentBoard, row, col, value){
         if(value == null) return false
 
         const startRow = Math.floor(row / 3) * 3
@@ -80,13 +100,24 @@ function GameBoard({selectedNumber}){
 
         for(let r = startRow; r < startRow + 3; r ++){
             for(let c = startCol; c < startCol + 3; c ++){
-                if((r !== row || c !== col) && board[r][c] === value){
+                if((r !== row || c !== col) && currentBoard[r][c] === value){
                     return true
                 }
             }
         }
 
         return false
+    }
+
+    function hasConflict(currentBoard, row, col, value){
+
+        if(value == null) return false
+
+        return(
+                haveRowConflict(currentBoard, row, col, value) || 
+                haveColConflict(currentBoard, row, col, value) ||
+                haveBoxConflict(currentBoard, row, col, value)
+        )
     }
 
     return(
@@ -98,18 +129,20 @@ function GameBoard({selectedNumber}){
                     const col = index % 9 
                     const row = Math.floor(index/ 9)
 
-                    const isHighlightedRow = haveRowConflict(row, col)
-                    const isHighlightedCol = haveColConflict(row, col)
-                    const isHighlightedBox = haveBoxConflict(row, col)
+                    /* const isHighlightedRow = haveRowConflict(row, col, selectedNumber)
+                    const isHighlightedCol = haveColConflict(row, col, selectedNumber)
+                    const isHighlightedBox = haveBoxConflict(row, col, selectedNumber)
+
+                    const isHighlighted = isHighlightedBox || isHighlightedCol || isHighlightedRow */
+
+                    const isHighlighted = hasConflict(board, row, col, board[row][col])
 
                     return(
                     <div 
                     key={index} 
-                    onClick={() => handleClick(col, row)}
+                    onClick={() => handleClick(col, row, selectedNumber)}
                     className={`w-20 h-20 border cell text-4xl flex justify-center items-center  
-                        ${isHighlightedRow? "bg-red-200" : "bg-blue-200"}
-                        ${isHighlightedCol? "bg-red-200" : "bg-blue-200"}
-                        ${isHighlightedBox? "bg-red-200" : "bg-blue-200"}
+                        ${isHighlighted? "bg-red-200" : "bg-blue-200"}
                         ${col % 3 === 0 ? "border-l-4" : ""}
                         ${row % 3 === 0 ? "border-t-4" : ""}
                         ${col === 8 ? "border-r-4" : ""}
