@@ -12,7 +12,7 @@ function Body(){
 
 
     return(
-        <div className="min-h-screen flex flex-col items-center gap-8 mt-8">
+        <div className="min-h-screen flex flex-col items-center">
             <Header/>
             <GameBoard selectedNumber={selectedNumber}/>
             <Numpad setSelectedNumber={setSelectedNumber}/>

@@ -1,11 +1,12 @@
-
-
+import "../../style/style.css"
 
 function Header(){
 
     return(
-        <header className="flex justify-center">
-            <h1 className="text-6xl">Sudoku</h1>
+        <header className="bg-blue-500 w-full py-6 mb-8">
+            <div className="flex justify-center items-center py-6">
+                <h1 className="text-6xl text-white">Sudoku</h1>
+            </div>
         </header>
     )
 }
