@@ -66,20 +66,20 @@ function GameBoard({selectedNumber}){
         }
         else{
             setBoard(prev => {
-            const next = prev.map(r => [...r])
-            next[row][col] = number
+                const next = prev.map(r => [...r])
+                next[row][col] = number
 
-            const isFull = next.every(row =>
-                row.every(cell => cell !== null)
-            )
+                const isFull = next.every(row =>
+                    row.every(cell => cell !== null)
+                )
 
-            if (isFull) {
-                setShowConfetti(true)
+                if (isFull && hasConflict(next, row, col, number) !== true ) {
+                    setShowConfetti(true)
 
-                setTimeout(() => {
-                    setShowConfetti(false)
-                }, 3000)
-            }
+                    setTimeout(() => {
+                        setShowConfetti(false)
+                    }, 3000)
+                }
 
             return next})
 
@@ -164,27 +164,6 @@ function GameBoard({selectedNumber}){
                 haveColConflict(currentBoard, row, col, value) ||
                 haveBoxConflict(currentBoard, row, col, value) 
         )
-    }
-
-    //Function to run confetti animation when the borad is full
-    function showModal(){
-        setShowConfetti(true)
-        setTimeout(() => {
-            setShowConfetti(false)
-        }, 3000)
-    }
-
-    function checkBoardNumbers(){
-        for(let r = 0; r < 9; r++){
-            for(let c = 0; c < 9; c++){
-                if(board[r][c] === null){
-                    return false
-                }
-            }
-        }
-    
-        return true;
-    
     }
 
     return(
