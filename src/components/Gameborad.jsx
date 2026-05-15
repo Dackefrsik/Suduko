@@ -1,11 +1,16 @@
 import {useState } from "react"
 import "../../style/style.css"
+
+import confetti from "../assets/confetti.gif"
+
 /* eslint-disable react-hooks/purity */ //Fimpar error för random
 
 function GameBoard({selectedNumber}){
 
     const [board, setBoard] = useState(createBoard)
     const [clickBoard, setClickBoard] = useState(createClickBoard)
+
+    const [showConfetti, setShowConfetti] = useState(false)
 
     function createBoard(){
         const board = Array.from({length: 9}, () => Array(9).fill(null))
@@ -63,6 +68,19 @@ function GameBoard({selectedNumber}){
             setBoard(prev => {
             const next = prev.map(r => [...r])
             next[row][col] = number
+
+            const isFull = next.every(row =>
+                row.every(cell => cell !== null)
+            )
+
+            if (isFull) {
+                setShowConfetti(true)
+
+                setTimeout(() => {
+                    setShowConfetti(false)
+                }, 3000)
+            }
+
             return next})
 
             //Check row
@@ -148,6 +166,27 @@ function GameBoard({selectedNumber}){
         )
     }
 
+    //Function to run confetti animation when the borad is full
+    function showModal(){
+        setShowConfetti(true)
+        setTimeout(() => {
+            setShowConfetti(false)
+        }, 3000)
+    }
+
+    function checkBoardNumbers(){
+        for(let r = 0; r < 9; r++){
+            for(let c = 0; c < 9; c++){
+                if(board[r][c] === null){
+                    return false
+                }
+            }
+        }
+    
+        return true;
+    
+    }
+
     return(
         <div className="flex items-center fkex justify-center">
             <div className="grid grid-cols-9 gap-0 w-fit">
@@ -173,7 +212,15 @@ function GameBoard({selectedNumber}){
                     >{board[row][col]}</div>
                 )})}
             </div>
-        </div>
+
+            {showConfetti && (
+
+                <div className="fixed insett-0 flex justify-center items-center z-50 position-events-none">
+                    <img src={confetti} alt="confetti rain" className="w-96"/>
+                </div>
+
+        )}
+    </div>
     )
 }
 
