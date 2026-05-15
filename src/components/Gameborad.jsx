@@ -10,7 +10,7 @@ function GameBoard({selectedNumber}){
     function createBoard(){
         const board = Array.from({length: 9}, () => Array(9).fill(null))
 
-        const amountOfSetNumber = Math.floor(Math.random() * 10)
+        const amountOfSetNumber = Math.floor(Math.random() * 10) + 3 
         console.log("Numbers " + amountOfSetNumber)
         
         for(let i = 0; i < amountOfSetNumber; i ++){
