@@ -3,14 +3,17 @@ import "../../style/style.css"
 
 import confetti from "../assets/confetti.gif"
 
+import Endscreen from "./Endscrean"
+
 /* eslint-disable react-hooks/purity */ //Fimpar error för random
 
 function GameBoard({selectedNumber}){
 
     const [board, setBoard] = useState(createBoard)
-    const [clickBoard, setClickBoard] = useState(createClickBoard)
+    const [clickBoard, setClickBoard] = useState(createClickBoard(board))
 
     const [showConfetti, setShowConfetti] = useState(false)
+    const [showEndScreen, setShowEndScreen] = useState(false)
 
     function createBoard(){
         const board = Array.from({length: 9}, () => Array(9).fill(null))
@@ -38,12 +41,12 @@ function GameBoard({selectedNumber}){
         return board 
     }
 
-    function createClickBoard(){
+    function createClickBoard(currentBoard){
         const clickBoard = Array.from({length: 9}, () => Array(9).fill(true))
 
         for(let r = 0; r < 9; r++){
             for(let c = 0; c < 9; c++){
-                if(board[r][c] !== null)
+                if(currentBoard[r][c] !== null)
                     clickBoard[r][c] = false
             }
         }
@@ -73,11 +76,15 @@ function GameBoard({selectedNumber}){
                     row.every(cell => cell !== null)
                 )
 
-                if (isFull && hasConflict(next, row, col, number) !== true ) {
+                
+
+                if (isFull && !boardHasConflict(next) ) {
                     setShowConfetti(true)
 
                     setTimeout(() => {
                         setShowConfetti(false)
+                        setShowEndScreen(true)
+
                     }, 3000)
                 }
 
@@ -155,6 +162,19 @@ function GameBoard({selectedNumber}){
         return false
     }
 
+    function boardHasConflict(currentBoard){
+        for(let row = 0; row < 9; row++){
+            for(let col = 0; col < 9; col++){
+                const value = currentBoard[row][col]
+                
+                if(value !== null && hasConflict(currentBoard, row, col, value)){
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     function hasConflict(currentBoard, row, col, value){
 
         if(value == null) return false
@@ -164,6 +184,19 @@ function GameBoard({selectedNumber}){
                 haveColConflict(currentBoard, row, col, value) ||
                 haveBoxConflict(currentBoard, row, col, value) 
         )
+    }
+
+    function restartGame(){
+        
+        const newGame = createBoard()
+
+        setBoard(newGame)
+        setClickBoard(createClickBoard(newGame))
+
+        setShowConfetti(false)
+        setShowEndScreen(false)
+
+        console.log("Click")
     }
 
     return(
@@ -199,6 +232,9 @@ function GameBoard({selectedNumber}){
                 </div>
 
         )}
+            {showEndScreen && (
+                <Endscreen restartGame={restartGame}/>
+            )}
     </div>
     )
 }
